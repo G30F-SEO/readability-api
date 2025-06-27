@@ -35,4 +35,9 @@ app.post('/parse', async (req, res) => {
     });
 
   } catch (err) {
-    res.status(500).json
+    res.status(500).json({ error: 'Failed to fetch or parse', detail: err.message });
+  }
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => console.log(`Readability API running on port ${PORT}`));
