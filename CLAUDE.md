@@ -1,94 +1,94 @@
 # CLAUDE.md — Readability API
 
-## Project Overview
+## Aperçu du projet
 
-A lightweight Node.js webhook API that extracts readable content from webpages using Mozilla's [Readability.js](https://github.com/mozilla/readability). It fetches a URL, parses the HTML, and returns clean article text, title, excerpt, and byline.
+API webhook légère en Node.js qui extrait le contenu lisible de pages web grâce à [Readability.js](https://github.com/mozilla/readability) de Mozilla. Elle récupère une URL, analyse le HTML et renvoie le texte nettoyé de l'article, son titre, son extrait et son auteur.
 
-## Tech Stack
+## Stack technique
 
-- **Runtime:** Node.js (CommonJS modules)
-- **Framework:** Express
-- **HTTP Client:** Axios
-- **HTML Parsing:** JSDOM + @mozilla/readability
-- **No TypeScript, no build step** — plain JavaScript, runs directly with `node`
+- **Runtime :** Node.js (modules CommonJS)
+- **Framework :** Express
+- **Client HTTP :** Axios
+- **Analyse HTML :** JSDOM + @mozilla/readability
+- **Pas de TypeScript, pas d'étape de build** — JavaScript pur, exécuté directement avec `node`
 
-## Project Structure
+## Structure du projet
 
 ```
 readability-api/
-├── index.js         # Entire application — Express server with single /parse endpoint
-├── package.json     # Dependencies and start script
-└── CLAUDE.md        # This file
+├── index.js         # Application complète — serveur Express avec un unique endpoint /parse
+├── package.json     # Dépendances et script de démarrage
+└── CLAUDE.md        # Ce fichier
 ```
 
-This is a single-file application. All logic lives in `index.js`.
+L'application tient dans un seul fichier. Toute la logique se trouve dans `index.js`.
 
-## Getting Started
+## Démarrage rapide
 
 ```bash
 npm install
-npm start          # or: node index.js
+npm start          # ou : node index.js
 ```
 
-The server listens on `PORT` env var (default: `3000`).
+Le serveur écoute sur la variable d'environnement `PORT` (par défaut : `3000`).
 
 ## API
 
 ### POST /parse
 
-Extracts readable content from a URL.
+Extrait le contenu lisible d'une URL.
 
-**Request:**
+**Requête :**
 ```json
 { "url": "https://example.com/article" }
 ```
 
-**Success response (200):**
+**Réponse succès (200) :**
 ```json
 {
-  "title": "Article Title",
-  "content": "Extracted text (max 10,000 chars)",
-  "excerpt": "Article excerpt or null",
-  "byline": "Author name or null"
+  "title": "Titre de l'article",
+  "content": "Texte extrait (max 10 000 caractères)",
+  "excerpt": "Extrait de l'article ou null",
+  "byline": "Nom de l'auteur ou null"
 }
 ```
 
-**Error responses:**
-- `400` — Missing `url` in request body
-- `500` — Fetch failure, parse failure, or unreadable content
+**Réponses d'erreur :**
+- `400` — `url` manquant dans le corps de la requête
+- `500` — Échec de récupération, d'analyse ou contenu illisible
 
-## Key Implementation Details
+## Détails d'implémentation
 
-- Content is truncated to **10,000 characters** (`article.textContent.slice(0, 10000)`)
-- HTTP requests use a **10-second timeout** and a generic `User-Agent: Mozilla/5.0` header
-- JSDOM receives the original URL for proper relative URL resolution
-- The app is **stateless** — no database, no caching, no persistent storage
+- Le contenu est tronqué à **10 000 caractères** (`article.textContent.slice(0, 10000)`)
+- Les requêtes HTTP utilisent un **timeout de 10 secondes** et un en-tête générique `User-Agent: Mozilla/5.0`
+- JSDOM reçoit l'URL d'origine pour la résolution correcte des URLs relatives
+- L'application est **sans état** — pas de base de données, pas de cache, pas de stockage persistant
 
-## Environment Variables
+## Variables d'environnement
 
-| Variable | Default | Description |
-|----------|---------|-------------|
-| `PORT`   | `3000`  | Server listen port |
+| Variable | Défaut | Description |
+|----------|--------|-------------|
+| `PORT`   | `3000` | Port d'écoute du serveur |
 
-## Development Notes
+## Notes de développement
 
-- **No tests** — there is no test framework or test suite configured
-- **No linter/formatter** — no ESLint or Prettier configuration
-- **No CI/CD** — no GitHub Actions or deployment pipeline
-- **No .gitignore** — `node_modules` should be excluded manually if needed
-- **No Docker** — no containerization config
+- **Pas de tests** — aucun framework de test ni suite de tests configurés
+- **Pas de linter/formatter** — aucune configuration ESLint ou Prettier
+- **Pas de CI/CD** — aucun pipeline GitHub Actions ou de déploiement
+- **Pas de .gitignore** — `node_modules` doit être exclu manuellement si nécessaire
+- **Pas de Docker** — aucune configuration de conteneurisation
 
-## Code Conventions
+## Conventions de code
 
-- CommonJS `require()` imports (not ES modules)
-- Async route handlers with try/catch error handling
-- JSON request/response throughout
-- Minimal dependencies — only what's needed
+- Imports CommonJS avec `require()` (pas de modules ES)
+- Handlers de routes asynchrones avec gestion d'erreurs try/catch
+- JSON en entrée et en sortie partout
+- Dépendances minimales — uniquement le nécessaire
 
-## Common Tasks
+## Tâches courantes
 
-| Task | Command |
-|------|---------|
-| Install dependencies | `npm install` |
-| Start the server | `npm start` |
-| Test the endpoint | `curl -X POST http://localhost:3000/parse -H "Content-Type: application/json" -d '{"url":"https://example.com"}'` |
+| Tâche | Commande |
+|-------|----------|
+| Installer les dépendances | `npm install` |
+| Démarrer le serveur | `npm start` |
+| Tester l'endpoint | `curl -X POST http://localhost:3000/parse -H "Content-Type: application/json" -d '{"url":"https://example.com"}'` |
