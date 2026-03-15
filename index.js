@@ -2,10 +2,25 @@ const express = require('express');
 const axios = require('axios');
 const { JSDOM } = require('jsdom');
 const { Readability } = require('@mozilla/readability');
+const cors = require('cors');
+const path = require('path');
+const routes = require('./routes');
+const { seedDatabase } = require('./seed');
 
 const app = express();
-app.use(express.json());
 
+// Middleware
+app.use(cors());
+app.use(express.json());
+app.use(express.static('public'));
+
+// Seed database on startup
+seedDatabase();
+
+// CrossFit API routes
+app.use('/api', routes);
+
+// Original readability endpoint (kept for backward compatibility)
 app.post('/parse', async (req, res) => {
   const { url } = req.body;
 
@@ -39,5 +54,10 @@ app.post('/parse', async (req, res) => {
   }
 });
 
+// Serve the main app
+app.get('/', (req, res) => {
+  res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Readability API running on port ${PORT}`));
+app.listen(PORT, () => console.log(`CrossFit Program Builder running on port ${PORT}`));

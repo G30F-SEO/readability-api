@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CrossFit Program Builder</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .tabs {
+            display: flex;
+            background: #f5f5f5;
+            border-bottom: 2px solid #ddd;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            background: none;
+            font-size: 1em;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s;
+        }
+
+        .tab:hover {
+            background: #e0e0e0;
+        }
+
+        .tab.active {
+            background: white;
+            color: #667eea;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 30px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1em;
+            font-weight: 600;
+            transition: transform 0.2s;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+        }
+
+        .btn-danger {
+            background: #dc3545;
+        }
+
+        .btn-success {
+            background: #28a745;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #333;
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            font-size: 1em;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s;
+        }
+
+        .card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .card h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .card-actions {
+            margin-top: 15px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            margin-right: 5px;
+        }
+
+        .badge-beginner {
+            background: #28a745;
+            color: white;
+        }
+
+        .badge-intermediate {
+            background: #ffc107;
+            color: #333;
+        }
+
+        .badge-advanced {
+            background: #dc3545;
+            color: white;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.7);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 600px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: #667eea;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5em;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 20px;
+            color: #667eea;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #999;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .wod-list {
+            margin-top: 15px;
+        }
+
+        .wod-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .exercise-list {
+            list-style: none;
+            margin-top: 10px;
+        }
+
+        .exercise-list li {
+            padding: 8px;
+            background: #f8f9fa;
+            margin-bottom: 5px;
+            border-radius: 5px;
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .stat-card h3 {
+            font-size: 2em;
+            margin-bottom: 5px;
+        }
+
+        .stat-card p {
+            opacity: 0.9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>CrossFit Program Builder</h1>
+            <p>Créez et gérez vos programmes d'entraînement CrossFit</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab active" data-tab="exercises">Exercices</button>
+            <button class="tab" data-tab="programs">Programmes</button>
+            <button class="tab" data-tab="wods">WODs</button>
+            <button class="tab" data-tab="progress">Progression</button>
+            <button class="tab" data-tab="generator">Générateur</button>
+        </div>
+
+        <!-- Exercises Tab -->
+        <div id="exercises-tab" class="tab-content active">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Bibliothèque d'exercices</h2>
+                <button class="btn" onclick="openExerciseModal()">Ajouter un exercice</button>
+            </div>
+            <div id="exercises-list" class="grid"></div>
+        </div>
+
+        <!-- Programs Tab -->
+        <div id="programs-tab" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Mes Programmes</h2>
+                <button class="btn" onclick="openProgramModal()">Créer un programme</button>
+            </div>
+            <div id="programs-list"></div>
+        </div>
+
+        <!-- WODs Tab -->
+        <div id="wods-tab" class="tab-content">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h2>Workouts (WODs)</h2>
+                <button class="btn" onclick="openWodModal()">Créer un WOD</button>
+            </div>
+            <div id="wods-list"></div>
+        </div>
+
+        <!-- Progress Tab -->
+        <div id="progress-tab" class="tab-content">
+            <h2>Suivi de progression</h2>
+            <div class="stats" id="progress-stats"></div>
+            <div id="progress-list"></div>
+        </div>
+
+        <!-- Generator Tab -->
+        <div id="generator-tab" class="tab-content">
+            <h2>Générateur de programme automatique</h2>
+            <p style="margin-bottom: 30px; color: #666;">Générez un programme complet automatiquement en fonction de vos objectifs</p>
+
+            <div class="form-group">
+                <label>Niveau de difficulté</label>
+                <select id="gen-difficulty">
+                    <option value="débutant">Débutant</option>
+                    <option value="intermédiaire">Intermédiaire</option>
+                    <option value="avancé">Avancé</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Durée (semaines)</label>
+                <input type="number" id="gen-duration" min="1" max="12" value="4">
+            </div>
+
+            <div class="form-group">
+                <label>Objectif</label>
+                <input type="text" id="gen-goal" placeholder="Ex: Force, endurance, perte de poids...">
+            </div>
+
+            <button class="btn btn-success" onclick="generateProgram()">Générer le programme</button>
+        </div>
+    </div>
+
+    <!-- Exercise Modal -->
+    <div id="exercise-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Ajouter un exercice</h2>
+                <button class="close-btn" onclick="closeModal('exercise-modal')">&times;</button>
+            </div>
+            <form onsubmit="saveExercise(event)">
+                <div class="form-group">
+                    <label>Nom *</label>
+                    <input type="text" id="exercise-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="exercise-description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Catégorie *</label>
+                    <input type="text" id="exercise-category" required>
+                </div>
+                <div class="form-group">
+                    <label>Équipement</label>
+                    <input type="text" id="exercise-equipment">
+                </div>
+                <div class="form-group">
+                    <label>Difficulté</label>
+                    <select id="exercise-difficulty">
+                        <option value="débutant">Débutant</option>
+                        <option value="intermédiaire">Intermédiaire</option>
+                        <option value="avancé">Avancé</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Program Modal -->
+    <div id="program-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Créer un programme</h2>
+                <button class="close-btn" onclick="closeModal('program-modal')">&times;</button>
+            </div>
+            <form onsubmit="saveProgram(event)">
+                <div class="form-group">
+                    <label>Nom du programme *</label>
+                    <input type="text" id="program-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="program-description" rows="3"></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Durée (semaines)</label>
+                    <input type="number" id="program-duration" min="1">
+                </div>
+                <div class="form-group">
+                    <label>Difficulté</label>
+                    <select id="program-difficulty">
+                        <option value="débutant">Débutant</option>
+                        <option value="intermédiaire">Intermédiaire</option>
+                        <option value="avancé">Avancé</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Objectif</label>
+                    <input type="text" id="program-goal">
+                </div>
+                <button type="submit" class="btn">Créer le programme</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- WOD Modal -->
+    <div id="wod-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Créer un WOD</h2>
+                <button class="close-btn" onclick="closeModal('wod-modal')">&times;</button>
+            </div>
+            <form onsubmit="saveWod(event)">
+                <div class="form-group">
+                    <label>Programme (optionnel)</label>
+                    <select id="wod-program"></select>
+                </div>
+                <div class="form-group">
+                    <label>Nom du WOD *</label>
+                    <input type="text" id="wod-name" required>
+                </div>
+                <div class="form-group">
+                    <label>Type de WOD *</label>
+                    <select id="wod-type" required>
+                        <option value="AMRAP">AMRAP (As Many Rounds As Possible)</option>
+                        <option value="For Time">For Time</option>
+                        <option value="EMOM">EMOM (Every Minute On the Minute)</option>
+                        <option value="Tabata">Tabata</option>
+                        <option value="Chipper">Chipper</option>
+                        <option value="Custom">Custom</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Durée (minutes)</label>
+                    <input type="number" id="wod-duration">
+                </div>
+                <div class="form-group">
+                    <label>Nombre de rounds</label>
+                    <input type="number" id="wod-rounds">
+                </div>
+                <div class="form-group">
+                    <label>Description</label>
+                    <textarea id="wod-description" rows="3"></textarea>
+                </div>
+                <button type="submit" class="btn">Créer le WOD</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>

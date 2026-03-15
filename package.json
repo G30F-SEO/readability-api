@@ -1,7 +1,7 @@
 {
-  "name": "readability-api",
+  "name": "crossfit-program-builder",
   "version": "1.0.0",
-  "description": "Webhook API to extract readable content from a webpage using Readability.js",
+  "description": "Application to create and manage CrossFit training programs",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
@@ -10,6 +10,8 @@
     "axios": "^1.6.7",
     "express": "^4.18.2",
     "jsdom": "^24.0.0",
-    "@mozilla/readability": "^0.4.4"
+    "@mozilla/readability": "^0.4.4",
+    "better-sqlite3": "^9.2.2",
+    "cors": "^2.8.5"
   }
 }
